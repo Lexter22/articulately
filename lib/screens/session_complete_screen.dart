@@ -22,9 +22,10 @@ class _SessionCompleteScreenState extends State<SessionCompleteScreen>
       vsync: this,
       duration: const Duration(milliseconds: 700),
     );
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
     _controller.forward();
   }
 
@@ -86,7 +87,7 @@ class _SessionCompleteScreenState extends State<SessionCompleteScreen>
                 child: Column(
                   children: [
                     Text(
-                      'Set Complete! 🎉',
+                      'Set Complete!',
                       style: Theme.of(context).textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -108,7 +109,9 @@ class _SessionCompleteScreenState extends State<SessionCompleteScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.colorPrimary,
                   foregroundColor: AppTheme.colorTextOnColor,
-                  padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppTheme.spacing16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),

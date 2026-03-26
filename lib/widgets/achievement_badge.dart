@@ -52,7 +52,7 @@ class _AchievementBadgeWidgetState extends State<AchievementBadgeWidget>
           color: const Color(0xFFFFD900),
           borderColor: const Color(0xFFC9A800),
           bgColor: const Color(0xFFFFFBE6),
-          label: '🥇 Gold',
+          label: 'Gold',
         );
       case BadgeTier.silver:
         return _BadgeStyle(
@@ -60,7 +60,7 @@ class _AchievementBadgeWidgetState extends State<AchievementBadgeWidget>
           color: const Color(0xFF9E9E9E),
           borderColor: const Color(0xFF757575),
           bgColor: const Color(0xFFF5F5F5),
-          label: '🥈 Silver',
+          label: 'Silver',
         );
       case BadgeTier.bronze:
         return _BadgeStyle(
@@ -68,7 +68,7 @@ class _AchievementBadgeWidgetState extends State<AchievementBadgeWidget>
           color: const Color(0xFFCD7F32),
           borderColor: const Color(0xFF8B5E3C),
           bgColor: const Color(0xFFFFF3E0),
-          label: '🥉 Bronze',
+          label: 'Bronze',
         );
     }
   }
