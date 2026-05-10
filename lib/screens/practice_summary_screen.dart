@@ -23,10 +23,7 @@ class PracticeSummaryScreen extends ConsumerWidget {
     final categoryId = session.categoryId ?? '';
 
     final repo = ref.read(contentRepositoryProvider);
-    final flashcardSet = repo.getFlashcardSet(categoryId, difficulty);
-    final cardCount = flashcardSet?.cards.length ?? 0;
-
-    final badge = AchievementBadge.tierFor(cardCount, elapsed);
+    final cardCountFuture = repo.getFlashcardCount(categoryId, difficulty);
     final next = nextDifficulty(difficulty);
 
     void onTryNextLevel() => context.go('/categories?difficulty=${next.name}');
@@ -34,7 +31,9 @@ class PracticeSummaryScreen extends ConsumerWidget {
     void onTryAgain() {
       ref.read(sessionProvider.notifier).resetSession();
       ref.read(timerProvider.notifier).reset();
-      context.go('/flashcard?categoryId=$categoryId&difficulty=${difficulty.name}');
+      context.go(
+        '/flashcard?categoryId=$categoryId&difficulty=${difficulty.name}',
+      );
     }
 
     void onHome() {
@@ -56,7 +55,11 @@ class PracticeSummaryScreen extends ConsumerWidget {
               // Header
               Row(
                 children: [
-                  const Icon(Icons.bar_chart_rounded, color: AppTheme.colorPrimary, size: 24),
+                  const Icon(
+                    Icons.bar_chart_rounded,
+                    color: AppTheme.colorPrimary,
+                    size: 24,
+                  ),
                   const SizedBox(width: AppTheme.spacing8),
                   Text(
                     'Session Summary',
@@ -66,8 +69,18 @@ class PracticeSummaryScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppTheme.spacing24),
               // Badge
-              Center(
-                child: AchievementBadgeWidget(badge: badge, sessionTime: elapsed),
+              FutureBuilder<int>(
+                future: cardCountFuture,
+                builder: (context, snapshot) {
+                  final cardCount = snapshot.data ?? 0;
+                  final badge = AchievementBadge.tierFor(cardCount, elapsed);
+                  return Center(
+                    child: AchievementBadgeWidget(
+                      badge: badge,
+                      sessionTime: elapsed,
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: AppTheme.spacing24),
               // Stats card
@@ -87,19 +100,35 @@ class PracticeSummaryScreen extends ConsumerWidget {
                       label: 'Time',
                       value: PracticeTimerDisplay.format(elapsed),
                     ),
-                    Container(width: 1, height: 40, color: AppTheme.colorBorder),
-                    _StatItem(
-                      icon: Icons.style_rounded,
-                      iconColor: AppTheme.colorPrimary,
-                      label: 'Cards',
-                      value: '$cardCount',
+                    Container(
+                      width: 1,
+                      height: 40,
+                      color: AppTheme.colorBorder,
                     ),
-                    Container(width: 1, height: 40, color: AppTheme.colorBorder),
+                    FutureBuilder<int>(
+                      future: cardCountFuture,
+                      builder: (context, snapshot) {
+                        final cardCount = snapshot.data ?? 0;
+                        return _StatItem(
+                          icon: Icons.style_rounded,
+                          iconColor: AppTheme.colorPrimary,
+                          label: 'Cards',
+                          value: '$cardCount',
+                        );
+                      },
+                    ),
+                    Container(
+                      width: 1,
+                      height: 40,
+                      color: AppTheme.colorBorder,
+                    ),
                     _StatItem(
                       icon: Icons.bolt_rounded,
                       iconColor: _difficultyColor(difficulty),
                       label: 'Level',
-                      value: difficulty.name[0].toUpperCase() + difficulty.name.substring(1),
+                      value:
+                          difficulty.name[0].toUpperCase() +
+                          difficulty.name.substring(1),
                     ),
                   ],
                 ),
@@ -113,11 +142,16 @@ class PracticeSummaryScreen extends ConsumerWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.colorPrimary,
                   foregroundColor: AppTheme.colorTextOnColor,
-                  padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppTheme.spacing16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                  textStyle: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               const SizedBox(height: AppTheme.spacing12),
@@ -128,11 +162,16 @@ class PracticeSummaryScreen extends ConsumerWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppTheme.colorTextPrimary,
                   side: const BorderSide(color: AppTheme.colorBorder, width: 2),
-                  padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppTheme.spacing16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                  textStyle: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               const SizedBox(height: AppTheme.spacing12),
@@ -142,8 +181,13 @@ class PracticeSummaryScreen extends ConsumerWidget {
                 label: const Text('Home'),
                 style: TextButton.styleFrom(
                   foregroundColor: AppTheme.colorTextSecondary,
-                  padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing16),
-                  textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppTheme.spacing16,
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               const SizedBox(height: AppTheme.spacing16),
@@ -188,9 +232,9 @@ class _StatItem extends StatelessWidget {
         const SizedBox(height: AppTheme.spacing4),
         Text(
           value,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
         ),
         Text(label, style: Theme.of(context).textTheme.bodySmall),
       ],

@@ -35,18 +35,17 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/complete',
-      pageBuilder: (context, state) => _page(state, const SessionCompleteScreen()),
+      pageBuilder: (context, state) =>
+          _page(state, const SessionCompleteScreen()),
     ),
     GoRoute(
       path: '/summary',
-      pageBuilder: (context, state) => _page(state, const PracticeSummaryScreen()),
+      pageBuilder: (context, state) =>
+          _page(state, const PracticeSummaryScreen()),
     ),
   ],
 );
 
 MaterialPage<void> _page(GoRouterState state, Widget child) {
-  return MaterialPage<void>(
-    key: state.pageKey,
-    child: child,
-  );
+  return MaterialPage<void>(key: state.pageKey, child: child);
 }
