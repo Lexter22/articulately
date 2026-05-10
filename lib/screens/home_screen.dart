@@ -48,7 +48,10 @@ class HomeScreen extends StatelessWidget {
                     color: AppTheme.colorPrimary,
                     borderRadius: BorderRadius.circular(24),
                     border: const Border(
-                      bottom: BorderSide(color: AppTheme.colorPrimaryDark, width: 4),
+                      bottom: BorderSide(
+                        color: AppTheme.colorPrimaryDark,
+                        width: 4,
+                      ),
                     ),
                   ),
                   child: Column(
@@ -65,7 +68,8 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         'Articulately',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        style: Theme.of(context).textTheme.displayLarge
+                            ?.copyWith(
                               color: AppTheme.colorTextOnColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w900,
@@ -76,9 +80,11 @@ class HomeScreen extends StatelessWidget {
                         'Articulate with Confidence',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppTheme.colorTextOnColor.withValues(alpha: 0.85),
-                              fontWeight: FontWeight.w600,
-                            ),
+                          color: AppTheme.colorTextOnColor.withValues(
+                            alpha: 0.85,
+                          ),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -87,14 +93,18 @@ class HomeScreen extends StatelessWidget {
                 // Section label
                 Row(
                   children: [
-                    const Icon(Icons.tune_rounded, size: 18, color: AppTheme.colorTextSecondary),
+                    const Icon(
+                      Icons.tune_rounded,
+                      size: 18,
+                      color: AppTheme.colorTextSecondary,
+                    ),
                     const SizedBox(width: AppTheme.spacing8),
                     Text(
                       'Choose your difficulty',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.colorTextSecondary,
-                          ),
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.colorTextSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -146,9 +156,10 @@ class _RandomButtonState extends State<_RandomButton>
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -162,6 +173,7 @@ class _RandomButtonState extends State<_RandomButton>
     _controller.reverse();
     widget.onTap();
   }
+
   void _onTapCancel() => _controller.reverse();
 
   @override
@@ -200,7 +212,11 @@ class _RandomButtonState extends State<_RandomButton>
                   color: Colors.white.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.shuffle_rounded, color: AppTheme.colorTextPrimary, size: 26),
+                child: const Icon(
+                  Icons.shuffle_rounded,
+                  color: AppTheme.colorTextPrimary,
+                  size: 26,
+                ),
               ),
               const SizedBox(width: AppTheme.spacing12),
               Column(
@@ -209,21 +225,24 @@ class _RandomButtonState extends State<_RandomButton>
                   Text(
                     'Random',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: AppTheme.colorTextPrimary,
-                          fontWeight: FontWeight.w800,
-                        ),
+                      color: AppTheme.colorTextPrimary,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                   Text(
                     'Surprise me!',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.colorTextPrimary.withValues(alpha: 0.7),
-                        ),
+                      color: AppTheme.colorTextPrimary.withValues(alpha: 0.7),
+                    ),
                   ),
                 ],
               ),
               const Spacer(),
-              Icon(Icons.chevron_right_rounded,
-                  color: AppTheme.colorTextPrimary.withValues(alpha: 0.6), size: 22),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: AppTheme.colorTextPrimary.withValues(alpha: 0.6),
+                size: 22,
+              ),
             ],
           ),
         ),

@@ -1,21 +1,24 @@
 import '../models/category.dart';
 import '../models/difficulty.dart';
 import '../models/flashcard_set.dart';
-import 'local_data_source.dart';
+import 'supabase_content_data_source.dart';
 
 class ContentRepository {
-  final LocalDataSource _dataSource;
+  final SupabaseContentDataSource _dataSource;
 
-  ContentRepository({LocalDataSource? dataSource})
-      : _dataSource = dataSource ?? LocalDataSource();
+  ContentRepository({SupabaseContentDataSource? dataSource})
+      : _dataSource = dataSource ?? SupabaseContentDataSource();
 
-  List<Category> getCategories() => _dataSource.getCategories();
+  Future<List<Category>> getCategories() => _dataSource.getCategories();
 
-  FlashcardSet? getFlashcardSet(String categoryId, Difficulty difficulty) {
-    final cards = _dataSource
-        .getFlashcards()
-        .where((f) => f.categoryId == categoryId && f.difficulty == difficulty)
-        .toList();
+  Future<FlashcardSet?> getFlashcardSet(
+    String categoryId,
+    Difficulty difficulty,
+  ) async {
+    final cards = await _dataSource.getFlashcards(
+      categoryId: categoryId,
+      difficulty: difficulty,
+    );
 
     if (cards.isEmpty) return null;
 
@@ -24,5 +27,16 @@ class ContentRepository {
       difficulty: difficulty,
       cards: cards,
     );
+  }
+
+  Future<int> getFlashcardCount(
+    String categoryId,
+    Difficulty difficulty,
+  ) async {
+    final cards = await _dataSource.getFlashcards(
+      categoryId: categoryId,
+      difficulty: difficulty,
+    );
+    return cards.length;
   }
 }

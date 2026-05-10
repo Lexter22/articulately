@@ -30,7 +30,6 @@ class FlashcardScreen extends ConsumerStatefulWidget {
 
 class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
     with SingleTickerProviderStateMixin {
-  FlashcardSet? _flashcardSet;
   bool _initialized = false;
   int _slideDirection = 1;
 
@@ -68,28 +67,49 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
     super.dispose();
   }
 
-  void _initialize() {
+  Future<void> _initialize() async {
     if (!mounted) return;
 
     final difficulty = _parseDifficulty(widget.difficulty);
     final repo = ref.read(contentRepositoryProvider);
-    final flashcardSet = repo.getFlashcardSet(widget.categoryId, difficulty);
+
+    FlashcardSet? flashcardSet;
+    try {
+      flashcardSet = await repo.getFlashcardSet(widget.categoryId, difficulty);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Failed to load cards. Check your connection.'),
+          action: SnackBarAction(
+            label: 'Retry',
+            onPressed: _initialize,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
 
     if (flashcardSet == null || flashcardSet.cards.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No exercises available for this combination')),
+        const SnackBar(
+          content: Text('No exercises available for this combination'),
+        ),
       );
       context.pop();
       return;
     }
 
-    ref.read(sessionProvider.notifier).startSession(difficulty, widget.categoryId, flashcardSet);
+    ref
+        .read(sessionProvider.notifier)
+        .startSession(difficulty, widget.categoryId, flashcardSet);
 
     final timerNotifier = ref.read(timerProvider.notifier);
     if (!timerNotifier.isActive) timerNotifier.start();
 
     setState(() {
-      _flashcardSet = flashcardSet;
       _initialized = true;
     });
   }
@@ -235,13 +255,17 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
                     label: 'Not yet',
                     icon: Icons.close_rounded,
                     color: AppTheme.colorCoral,
-                    opacity: swipeProgress < 0 ? (-swipeProgress).clamp(0.0, 1.0) : 0.0,
+                    opacity: swipeProgress < 0
+                        ? (-swipeProgress).clamp(0.0, 1.0)
+                        : 0.0,
                   ),
                   _SwipeHint(
                     label: 'Got it!',
                     icon: Icons.check_rounded,
                     color: AppTheme.colorPrimary,
-                    opacity: swipeProgress > 0 ? swipeProgress.clamp(0.0, 1.0) : 0.0,
+                    opacity: swipeProgress > 0
+                        ? swipeProgress.clamp(0.0, 1.0)
+                        : 0.0,
                     rightAligned: true,
                   ),
                 ],
@@ -266,17 +290,22 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 200),
                       transitionBuilder: (child, animation) {
-                        final offset = Tween<Offset>(
-                          begin: Offset(_slideDirection.toDouble(), 0),
-                          end: Offset.zero,
-                        ).animate(CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeInOut,
-                        ));
+                        final offset =
+                            Tween<Offset>(
+                              begin: Offset(_slideDirection.toDouble(), 0),
+                              end: Offset.zero,
+                            ).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeInOut,
+                              ),
+                            );
                         return SlideTransition(position: offset, child: child);
                       },
                       child: _SwipeableCard(
-                        key: ValueKey('${session.currentIndex}-${currentCard.id}'),
+                        key: ValueKey(
+                          '${session.currentIndex}-${currentCard.id}',
+                        ),
                         card: currentCard,
                         swipeProgress: swipeProgress,
                       ),
@@ -290,8 +319,8 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
                 '← Not yet  ·  Got it! →',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.colorTextSecondary.withValues(alpha: 0.6),
-                    ),
+                  color: AppTheme.colorTextSecondary.withValues(alpha: 0.6),
+                ),
               ),
               const SizedBox(height: AppTheme.spacing16),
               // Arrow nav row
@@ -302,10 +331,7 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
                     direction: NavDirection.prev,
                     onTap: isFirst ? null : _onPrev,
                   ),
-                  NavArrowButton(
-                    direction: NavDirection.next,
-                    onTap: _onNext,
-                  ),
+                  NavArrowButton(direction: NavDirection.next, onTap: _onNext),
                 ],
               ),
               const SizedBox(height: AppTheme.spacing8),
@@ -323,12 +349,18 @@ class _SwipeableCard extends StatelessWidget {
   final Flashcard card;
   final double swipeProgress; // -1.0 (full left) to 1.0 (full right)
 
-  const _SwipeableCard({super.key, required this.card, required this.swipeProgress});
+  const _SwipeableCard({
+    super.key,
+    required this.card,
+    required this.swipeProgress,
+  });
 
   @override
   Widget build(BuildContext context) {
     final goodOpacity = swipeProgress > 0 ? swipeProgress.clamp(0.0, 0.5) : 0.0;
-    final badOpacity = swipeProgress < 0 ? (-swipeProgress).clamp(0.0, 0.5) : 0.0;
+    final badOpacity = swipeProgress < 0
+        ? (-swipeProgress).clamp(0.0, 0.5)
+        : 0.0;
 
     return Stack(
       children: [
@@ -390,18 +422,28 @@ class _SwipeHint extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: rightAligned
               ? [
-                  Text(label,
-                      style: TextStyle(
-                          color: color, fontWeight: FontWeight.w700, fontSize: 13)),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
                   const SizedBox(width: 4),
                   Icon(icon, color: color, size: 16),
                 ]
               : [
                   Icon(icon, color: color, size: 16),
                   const SizedBox(width: 4),
-                  Text(label,
-                      style: TextStyle(
-                          color: color, fontWeight: FontWeight.w700, fontSize: 13)),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
                 ],
         ),
       ),
@@ -433,15 +475,19 @@ class _RetryBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.replay_rounded, color: AppTheme.colorYellowDark, size: 18),
+          const Icon(
+            Icons.replay_rounded,
+            color: AppTheme.colorYellowDark,
+            size: 18,
+          ),
           const SizedBox(width: AppTheme.spacing8),
           Expanded(
             child: Text(
               'Almost there! $badCount card${badCount == 1 ? '' : 's'} to review',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.colorYellowDark,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: AppTheme.colorYellowDark,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

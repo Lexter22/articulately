@@ -7,10 +7,17 @@ import '../providers/content_provider.dart';
 import '../theme.dart';
 import '../widgets/category_tile.dart';
 
-class CategoryListScreen extends ConsumerWidget {
+class CategoryListScreen extends ConsumerStatefulWidget {
   final String difficulty;
 
   const CategoryListScreen({super.key, required this.difficulty});
+
+  @override
+  ConsumerState<CategoryListScreen> createState() => _CategoryListScreenState();
+}
+
+class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
+  String get difficulty => widget.difficulty;
 
   Difficulty _parseDifficulty(String value) {
     return Difficulty.values.firstWhere(
@@ -19,10 +26,16 @@ class CategoryListScreen extends ConsumerWidget {
     );
   }
 
-  void _onCategoryTapped(BuildContext context, WidgetRef ref, String categoryId) {
+  Future<void> _onCategoryTapped(
+    BuildContext context,
+    WidgetRef ref,
+    String categoryId,
+  ) async {
     final repo = ref.read(contentRepositoryProvider);
     final diff = _parseDifficulty(difficulty);
-    final flashcardSet = repo.getFlashcardSet(categoryId, diff);
+    final flashcardSet = await repo.getFlashcardSet(categoryId, diff);
+
+    if (!context.mounted) return;
 
     if (flashcardSet == null || flashcardSet.cards.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -61,8 +74,8 @@ class CategoryListScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final categories = ref.watch(contentRepositoryProvider).getCategories();
+  Widget build(BuildContext context) {
+    final repo = ref.watch(contentRepositoryProvider);
     final diff = _parseDifficulty(difficulty);
     final badge = _badgeStyle(diff);
 
@@ -107,28 +120,91 @@ class CategoryListScreen extends ConsumerWidget {
                     Text(
                       '${badge.label} difficulty selected',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: badge.color,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        color: badge.color,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: AppTheme.spacing16),
               // Category list
-              ...List.generate(categories.length, (index) {
-                final category = categories[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppTheme.spacing12),
-                  child: CategoryTile(
-                    category: category,
-                    onTap: () => _onCategoryTapped(context, ref, category.id),
-                  ),
-                );
-              }),
+              FutureBuilder(
+                future: repo.getCategories(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: AppTheme.spacing24,
+                      ),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  if (snapshot.hasError) {
+                    return _ErrorRetry(
+                      onRetry: () => setState(() {}),
+                    );
+                  }
+
+                  final categories = snapshot.data ?? const [];
+                  if (categories.isEmpty) {
+                    return Text(
+                      'No categories available yet.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    );
+                  }
+
+                  return Column(
+                    children: List.generate(categories.length, (index) {
+                      final category = categories[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: AppTheme.spacing12,
+                        ),
+                        child: CategoryTile(
+                          category: category,
+                          onTap: () =>
+                              _onCategoryTapped(context, ref, category.id),
+                        ),
+                      );
+                    }),
+                  );
+                },
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ErrorRetry extends StatelessWidget {
+  final VoidCallback onRetry;
+  const _ErrorRetry({required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing24),
+      child: Column(
+        children: [
+          const Icon(Icons.wifi_off_rounded, size: 48, color: AppTheme.colorTextSecondary),
+          const SizedBox(height: AppTheme.spacing12),
+          Text(
+            'Could not load categories.',
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppTheme.spacing12),
+          OutlinedButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('Retry'),
+          ),
+        ],
       ),
     );
   }
