@@ -19,24 +19,10 @@ class ContentRepository {
       categoryId: categoryId,
       difficulty: difficulty,
     );
-
     if (cards.isEmpty) return null;
-
-    return FlashcardSet(
-      categoryId: categoryId,
-      difficulty: difficulty,
-      cards: cards,
-    );
+    return FlashcardSet(categoryId: categoryId, difficulty: difficulty, cards: cards);
   }
 
-  Future<int> getFlashcardCount(
-    String categoryId,
-    Difficulty difficulty,
-  ) async {
-    final cards = await _dataSource.getFlashcards(
-      categoryId: categoryId,
-      difficulty: difficulty,
-    );
-    return cards.length;
-  }
+  Future<int> getFlashcardCount(String categoryId, Difficulty difficulty) =>
+      _dataSource.getFlashcardCount(categoryId: categoryId, difficulty: difficulty);
 }

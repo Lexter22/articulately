@@ -12,8 +12,7 @@ class FlashcardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Container(
+    return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(AppTheme.spacing32),
         decoration: BoxDecoration(
@@ -56,7 +55,6 @@ class FlashcardCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }

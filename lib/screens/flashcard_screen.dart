@@ -43,12 +43,8 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
 
   static const double _swipeThreshold = 100.0;
 
-  Difficulty _parseDifficulty(String value) {
-    return Difficulty.values.firstWhere(
-      (d) => d.name == value,
-      orElse: () => Difficulty.easy,
-    );
-  }
+  Difficulty _parseDifficulty(String value) =>
+      DifficultyParsing.fromString(value);
 
   @override
   void initState() {

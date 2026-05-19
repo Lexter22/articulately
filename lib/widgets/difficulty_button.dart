@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/difficulty.dart';
 import '../theme.dart';
+import 'pressable.dart';
 
-class DifficultyButton extends StatefulWidget {
+class DifficultyButton extends StatelessWidget {
   final Difficulty difficulty;
   final VoidCallback onTap;
 
@@ -12,42 +13,8 @@ class DifficultyButton extends StatefulWidget {
     required this.onTap,
   });
 
-  @override
-  State<DifficultyButton> createState() => _DifficultyButtonState();
-}
-
-class _DifficultyButtonState extends State<DifficultyButton>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _onTapDown(TapDownDetails _) => _controller.forward();
-  void _onTapUp(TapUpDetails _) {
-    _controller.reverse();
-    widget.onTap();
-  }
-  void _onTapCancel() => _controller.reverse();
-
   _DifficultyStyle get _style {
-    switch (widget.difficulty) {
+    switch (difficulty) {
       case Difficulty.easy:
         return _DifficultyStyle(
           label: 'Easy',
@@ -81,13 +48,10 @@ class _DifficultyButtonState extends State<DifficultyButton>
   @override
   Widget build(BuildContext context) {
     final s = _style;
-    return GestureDetector(
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Container(
+    return Pressable(
+      onTap: onTap,
+      scaleTo: 0.95,
+      child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(
             vertical: AppTheme.spacing16,
@@ -141,7 +105,6 @@ class _DifficultyButtonState extends State<DifficultyButton>
             ],
           ),
         ),
-      ),
     );
   }
 }

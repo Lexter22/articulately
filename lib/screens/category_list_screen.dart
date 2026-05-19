@@ -19,12 +19,8 @@ class CategoryListScreen extends ConsumerStatefulWidget {
 class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
   String get difficulty => widget.difficulty;
 
-  Difficulty _parseDifficulty(String value) {
-    return Difficulty.values.firstWhere(
-      (d) => d.name == value,
-      orElse: () => Difficulty.easy,
-    );
-  }
+  Difficulty _parseDifficulty(String value) =>
+      DifficultyParsing.fromString(value);
 
   Future<void> _onCategoryTapped(
     BuildContext context,

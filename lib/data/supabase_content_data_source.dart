@@ -16,7 +16,7 @@ class SupabaseContentDataSource {
         .select('id, name, subtitle')
         .order('name');
 
-    return (data as List).map((row) => Category(
+    return data.map((row) => Category(
           id: row['id'] as String,
           name: (row['name'] as String?) ?? 'Untitled',
           subtitle: (row['subtitle'] as String?) ?? '',
@@ -33,14 +33,24 @@ class SupabaseContentDataSource {
         .eq('category_id', categoryId)
         .eq('difficulty', difficulty.name);
 
-    return (data as List).map((row) => Flashcard(
+    return data.map((row) => Flashcard(
           id: row['id'] as String,
           text: (row['text'] as String?) ?? '',
           categoryId: categoryId,
-          difficulty: Difficulty.values.firstWhere(
-            (d) => d.name == row['difficulty'],
-            orElse: () => Difficulty.easy,
-          ),
+          difficulty: DifficultyParsing.fromString(row['difficulty'] as String? ?? ''),
         )).toList();
+  }
+
+  Future<int> getFlashcardCount({
+    required String categoryId,
+    required Difficulty difficulty,
+  }) async {
+    final response = await _client
+        .from('flashcards')
+        .select()
+        .eq('category_id', categoryId)
+        .eq('difficulty', difficulty.name)
+        .count(CountOption.exact);
+    return response.count;
   }
 }
