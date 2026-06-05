@@ -69,18 +69,10 @@ class PracticeSummaryScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppTheme.spacing24),
               // Badge
-              FutureBuilder<int>(
-                future: cardCountFuture,
-                builder: (context, snapshot) {
-                  final cardCount = snapshot.data ?? 0;
-                  final badge = AchievementBadge.tierFor(cardCount, elapsed);
-                  return Center(
-                    child: AchievementBadgeWidget(
-                      badge: badge,
-                      sessionTime: elapsed,
-                    ),
-                  );
-                },
+              Center(
+                child: AchievementBadgeWidget(
+                  badge: AchievementBadge.tierFor(session.retryCardCount),
+                ),
               ),
               const SizedBox(height: AppTheme.spacing24),
               // Stats card
@@ -116,6 +108,19 @@ class PracticeSummaryScreen extends ConsumerWidget {
                           value: '$cardCount',
                         );
                       },
+                    ),
+                    Container(
+                      width: 1,
+                      height: 40,
+                      color: AppTheme.colorBorder,
+                    ),
+                    _StatItem(
+                      icon: Icons.refresh_rounded,
+                      iconColor: AppTheme.colorCoral,
+                      label: 'Retries',
+                      value: session.retryCardCount == 0
+                          ? 'Perfect!'
+                          : '${session.retryCardCount}',
                     ),
                     Container(
                       width: 1,

@@ -12,6 +12,9 @@ class SessionState {
   /// Whether we are currently in the "retry bad cards" round.
   final bool isRetryRound;
 
+  /// Number of unique cards that entered a retry round (never decremented).
+  final int retryCardCount;
+
   const SessionState({
     this.difficulty,
     this.categoryId,
@@ -20,6 +23,7 @@ class SessionState {
     this.isComplete = false,
     this.badCardIds = const {},
     this.isRetryRound = false,
+    this.retryCardCount = 0,
   });
 
   SessionState copyWith({
@@ -30,6 +34,7 @@ class SessionState {
     bool? isComplete,
     Set<String>? badCardIds,
     bool? isRetryRound,
+    int? retryCardCount,
   }) {
     return SessionState(
       difficulty: difficulty ?? this.difficulty,
@@ -39,6 +44,7 @@ class SessionState {
       isComplete: isComplete ?? this.isComplete,
       badCardIds: badCardIds ?? this.badCardIds,
       isRetryRound: isRetryRound ?? this.isRetryRound,
+      retryCardCount: retryCardCount ?? this.retryCardCount,
     );
   }
 }

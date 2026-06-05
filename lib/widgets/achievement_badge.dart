@@ -4,12 +4,10 @@ import '../theme.dart';
 
 class AchievementBadgeWidget extends StatefulWidget {
   final AchievementBadge badge;
-  final Duration sessionTime;
 
   const AchievementBadgeWidget({
     super.key,
     required this.badge,
-    required this.sessionTime,
   });
 
   @override

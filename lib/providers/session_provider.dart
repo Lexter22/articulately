@@ -34,18 +34,22 @@ class SessionNotifier extends StateNotifier<SessionState> {
     final idx = state.currentIndex;
     final newBadIds = Set<String>.from(state.badCardIds)
       ..remove(_activeDeck[idx].id);
-    _advance(newBadIds);
+    _advance(newBadIds, state.retryCardCount);
   }
 
   /// Swipe left — mark current card as bad and advance.
   void markBad() {
     final idx = state.currentIndex;
-    final newBadIds = Set<String>.from(state.badCardIds)
-      ..add(_activeDeck[idx].id);
-    _advance(newBadIds);
+    final cardId = _activeDeck[idx].id;
+    final newBadIds = Set<String>.from(state.badCardIds)..add(cardId);
+    // Increment retryCardCount when a card is first added to badCardIds.
+    final newRetryCount = newBadIds.length > state.badCardIds.length
+        ? state.retryCardCount + 1
+        : state.retryCardCount;
+    _advance(newBadIds, newRetryCount);
   }
 
-  void _advance(Set<String> updatedBadIds) {
+  void _advance(Set<String> updatedBadIds, int retryCardCount) {
     final isLastCard = state.currentIndex >= _activeDeck.length - 1;
 
     if (!isLastCard) {
@@ -53,6 +57,7 @@ class SessionNotifier extends StateNotifier<SessionState> {
       state = state.copyWith(
         currentIndex: state.currentIndex + 1,
         badCardIds: updatedBadIds,
+        retryCardCount: retryCardCount,
       );
       return;
     }
@@ -63,6 +68,7 @@ class SessionNotifier extends StateNotifier<SessionState> {
       state = state.copyWith(
         badCardIds: updatedBadIds,
         isComplete: true,
+        retryCardCount: retryCardCount,
       );
       return;
     }
@@ -77,6 +83,7 @@ class SessionNotifier extends StateNotifier<SessionState> {
       badCardIds: updatedBadIds,
       isRetryRound: true,
       isComplete: false,
+      retryCardCount: retryCardCount,
     );
   }
 
@@ -106,6 +113,7 @@ class SessionNotifier extends StateNotifier<SessionState> {
       isComplete: false,
       badCardIds: const {},
       isRetryRound: false,
+      retryCardCount: 0,
     );
   }
 
