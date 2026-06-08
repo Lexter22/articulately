@@ -139,32 +139,18 @@ flutter test
 
 ---
 
-## Upcoming Features
+## What's Next
 
-Here's the roadmap of features planned for future releases:
+Things that actually need doing, in rough priority order:
 
-### Near-Term (Next Release)
-
-- **Custom Branding & Design System** — Replace placeholder branding with a unique Articulately identity (custom colour palette, typography, and component styles)
-- **ORM-Powered Schema Management** — Drizzle ORM integration for type-safe database migrations and schema versioning
-- **User Accounts & Authentication** — Supabase Auth for sign-up/login so users can track progress across devices
-- **Progress Tracking & History** — Persistent session history showing improvement over time (cards practiced, time trends, badge history)
-
-### Mid-Term
-
-- **Spaced Repetition Algorithm** — Intelligent card scheduling based on performance (cards you struggle with appear more often)
-- **Custom Card Creation** — Let users or therapists create their own flashcard sets with custom text
-- **Audio Playback** — Optional audio pronunciation guides for each card
-- **Speech Recognition Integration** — Use device microphone to detect and score articulation accuracy in real-time
-- **Streak System & Daily Goals** — Motivational features to encourage daily practice habits
-
-### Long-Term
-
-- **Therapist Dashboard** — A companion web portal where speech therapists can assign exercises, monitor patient progress, and customize content
-- **Multi-Language Support** — Localized content and UI for non-English articulation practice
-- **Social Features** — Practice with friends, share achievements, or compete on leaderboards
-- **Export & Reporting** — PDF/CSV session reports for clinical documentation
-- **Accessibility Enhancements** — Full VoiceOver/TalkBack support, high-contrast mode, and adjustable text sizing
+1. **User accounts** — Supabase Auth so progress persists across devices. Without this, everything resets on reinstall.
+2. **Session history** — Store completed sessions in Supabase. Show a simple history screen with date, category, time, and badge earned.
+3. **Spaced repetition** — Cards you get wrong should show up more often in future sessions. Doesn't need to be fancy — even a basic "last failed" weight is better than pure random.
+4. **More content** — The app is only as good as its flashcard library. Add more categories and difficulty tiers. Consider a simple CSV import flow for bulk content.
+5. **Polish the UI** — The current design works but it's generic. Custom branding, better animations on the card swipe, and a proper empty state when categories have no cards.
+6. **Audio playback** — Optional pronunciation audio per card. Useful for language learners and therapy patients who need a reference.
+7. **Tests** — The test suite is thin. Widget tests for each screen and integration tests for the core flows (select → practice → complete) would prevent regressions.
+8. **CI/CD** — GitHub Actions running `flutter test` and `flutter analyze` on PRs. Deploy web builds to Firebase Hosting or Vercel on merge to main.
 
 ---
 

@@ -29,6 +29,21 @@ class SessionNotifier extends StateNotifier<SessionState> {
     );
   }
 
+  /// Start a session with a pre-built list of flashcards (e.g. a shuffled/trimmed deck).
+  void startSessionWithDeck(Difficulty difficulty, String categoryId, List<Flashcard> cards) {
+    _originalCards = List.of(cards);
+    _activeDeck = List.of(_originalCards);
+    state = SessionState(
+      difficulty: difficulty,
+      categoryId: categoryId,
+      currentIndex: 0,
+      elapsed: Duration.zero,
+      isComplete: false,
+      badCardIds: const {},
+      isRetryRound: false,
+    );
+  }
+
   /// Swipe right — mark current card as good and advance.
   void markGood() {
     final idx = state.currentIndex;

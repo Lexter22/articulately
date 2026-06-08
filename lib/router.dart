@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'screens/admin_login_screen.dart';
 import 'screens/admin_screen.dart';
+import 'screens/card_count_selector_screen.dart';
 import 'screens/category_list_screen.dart';
 import 'screens/flashcard_screen.dart';
 import 'screens/home_screen.dart';
@@ -42,6 +43,16 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) => _page(
         state,
         CategoryListScreen(
+          difficulty: state.uri.queryParameters['difficulty'] ?? 'easy',
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/card-count-selector',
+      pageBuilder: (context, state) => _page(
+        state,
+        CardCountSelectorScreen(
+          categoryId: state.uri.queryParameters['categoryId'] ?? '',
           difficulty: state.uri.queryParameters['difficulty'] ?? 'easy',
         ),
       ),
