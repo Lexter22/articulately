@@ -22,28 +22,14 @@ class _CategoryListScreenState extends ConsumerState<CategoryListScreen> {
   Difficulty _parseDifficulty(String value) =>
       DifficultyParsing.fromString(value);
 
-  Future<void> _onCategoryTapped(
+  void _onCategoryTapped(
     BuildContext context,
     WidgetRef ref,
     String categoryId,
-  ) async {
-    final repo = ref.read(contentRepositoryProvider);
-    final diff = _parseDifficulty(difficulty);
-    final flashcardSet = await repo.getFlashcardSet(categoryId, diff);
-
-    if (!context.mounted) return;
-
-    if (flashcardSet == null || flashcardSet.cards.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No exercises available for this combination'),
-        ),
-      );
-      context.pop();
-      return;
-    }
-
-    context.push('/flashcard?categoryId=$categoryId&difficulty=$difficulty');
+  ) {
+    context.push(
+      '/card-count-selector?categoryId=$categoryId&difficulty=$difficulty',
+    );
   }
 
   _DifficultyBadgeStyle _badgeStyle(Difficulty diff) {
