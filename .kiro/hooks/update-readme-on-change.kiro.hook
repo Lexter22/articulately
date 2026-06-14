@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Update README on Code Changes",
+  "description": "When code files in lib/ are edited, prompts the agent to review the changes and update README.md to keep documentation in sync with the codebase.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "lib/**/*.dart",
+      "pubspec.yaml",
+      "supabase/migrations/*.sql"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A code file was just edited. Review the change and determine if README.md needs to be updated to reflect new features, changed architecture, updated commands, or modified project structure. If so, update README.md accordingly. Keep the updates concise and relevant."
+  }
+}
