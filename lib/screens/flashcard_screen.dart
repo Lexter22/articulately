@@ -67,6 +67,23 @@ class _FlashcardScreenState extends ConsumerState<FlashcardScreen>
     if (!mounted) return;
 
     final difficulty = _parseDifficulty(widget.difficulty);
+
+    // If a session was already started (e.g. from CardCountSelectorScreen),
+    // skip re-fetching and just start the timer.
+    final existingSession = ref.read(sessionProvider);
+    final notifier = ref.read(sessionProvider.notifier);
+    if (existingSession.categoryId == widget.categoryId &&
+        existingSession.difficulty == difficulty &&
+        notifier.activeDeck.isNotEmpty &&
+        !existingSession.isComplete) {
+      final timerNotifier = ref.read(timerProvider.notifier);
+      if (!timerNotifier.isActive) timerNotifier.start();
+      setState(() {
+        _initialized = true;
+      });
+      return;
+    }
+
     final repo = ref.read(contentRepositoryProvider);
 
     FlashcardSet? flashcardSet;
