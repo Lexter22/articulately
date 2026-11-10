@@ -18,11 +18,12 @@ Articulately is a speech articulation practice app. Users improve verbal clarity
 - Language learners
 - Voice actors and performers
 - Anyone improving spoken clarity
+- Articulation practice for kids
 
 ## Key Capabilities
 
 - Offline-ready with repository pattern (Supabase remote + local fallback)
 - Admin panel for content management (behind Supabase Auth)
 - Live practice timer
-- Achievement badges based on speed
+- Achievement badges based on number of flashcards swept right
 - Category and difficulty-based content organisation

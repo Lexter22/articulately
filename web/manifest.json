@@ -1,23 +1,29 @@
 {
-    "name": "articulately",
-    "short_name": "articulately",
-    "start_url": ".",
+    "name": "Articulately - Speech Articulation Practice",
+    "short_name": "Articulately",
+    "id": "/",
+    "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#F7F7F7",
+    "theme_color": "#58CC02",
+    "description": "Practice clear speech with guided articulation exercises. Build clarity and confidence, one sound at a time.",
+    "orientation": "any",
+    "categories": ["education", "health", "lifestyle"],
+    "lang": "en",
     "prefer_related_applications": false,
     "icons": [
         {
             "src": "icons/Icon-192.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
         },
         {
             "src": "icons/Icon-512.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
         },
         {
             "src": "icons/Icon-maskable-192.png",
