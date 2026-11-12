@@ -2,6 +2,10 @@
 
 **Articulate with Confidence**
 
+**Live app: [articulately-5c15b.web.app](https://articulately-5c15b.web.app)**
+
+It is an installable web app (PWA). Open it on your phone and choose "Add to Home Screen" to use it like a native app.
+
 Articulately is a speech articulation practice app built with Flutter. It helps users improve their verbal clarity, pronunciation, and speaking confidence through flashcard-based exercises organized by difficulty and category.
 
 ---
